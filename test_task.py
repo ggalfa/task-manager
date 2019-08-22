@@ -136,3 +136,58 @@ def test_detail_task_not_exists():
     response = cliente.get('/task/1', content_type='application/json')
     assert response.status_code == 404
 
+def test_update_a_task_existing():
+    tasks.clear()
+    tasks.append({'id': 1, 'titulo': 'titulo',
+                   'descricao': 'descricao', 'estado': False})
+    cliente = app.test_client()
+    response = cliente.put('/task/1', data=json.dumps(
+        {'titulo': 'titulo atualizado',
+          'descricao': 'descricao atualizada', 'estado': True}
+    ),
+        content_type='application/json')
+    data = json.loads(response.data.decode('utf-8'))
+    assert response.status_code == 200
+    assert data['id'] == 1
+    assert data['titulo'] == 'titulo atualizado'
+    assert data['descricao'] == 'descricao atualizada'
+    assert data['estado'] is True
+
+def test_update_a_task_not_existing():
+    tasks.clear()
+    cliente = app.test_client()
+    response = cliente.put('/task/1', data=json.dumps({
+        'titulo': 'titulo atualizado',
+        'descricao': 'descricao atualizada', 'estado': True
+    }),
+        content_type='application/json')
+    assert response.status_code ==  404
+
+def test_updating_a_task_with_fields_invalids():
+    tasks.clear()
+    tasks.append({'id': 1, 'titulo': 'titulo',
+                    'descricao': 'descricao', 'estado': False})
+    cliente = app.test_client()
+    # sem estado
+    response = cliente.put('/taskfa/1', data=json.dumps(
+        {'titulo': 'titulo atualizado',
+         'decricao': 'descricao atualizada'}
+    ),
+        content_type='application/json')
+    if response.status_code == 400:
+        assert response.status_code == 400
+    assert response.status_code == 404
+    # sem descrição
+    response = cliente.put('/task/1', data=json.dumps(
+        {'titulo': 'titulo atualizado',
+         'estado': False}
+    ),
+        content_type='application/json')
+    assert response.status_code == 400
+    # sem titulo
+    response = cliente.put('/task/1', data=json.dumps(
+        {'descricao': 'descricao atualizado',
+         'estado': False}
+    ),
+        content_type='application/json')
+    assert response.status_code == 400

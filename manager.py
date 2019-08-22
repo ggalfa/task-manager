@@ -51,3 +51,21 @@ def detail(id_task):
     if not task:
         abort(404)
     return jsonify(task[0])
+
+# Creating a route for update task
+@app.route('/task/<int:id_task>', methods=['PUT'])
+def update(id_task):
+    task = [task for task in tasks if task['id'] == id_task]
+    title = request.json.get('titulo')
+    description = request.json.get('descricao')
+    entregue = request.json.get('estado')
+    if not task:
+        abort(404)
+    if not description or not title or entregue is None:
+        abort(400)
+    task_chosen = task[0]
+    task_chosen['titulo'] = title or task_chosen['titulo']
+    task_chosen['descricao'] = description or task_chosen['descricao']
+    task_chosen['estado'] = entregue or task_chosen['estado']
+    return jsonify(task_chosen)
+
