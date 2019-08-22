@@ -87,3 +87,32 @@ def test_create_task_insert_element_in_blank():
 #         first_task, second_task = data
 #         assert first_task['titulo'] == 'tarefa 2'
 #         assert second_task['titulo'] == 'tarefa 1'
+
+def test_delete_task_uses_verb_delete():
+    tasks.clear()
+    with app.test_client() as cliente:
+        response = cliente.delete('/tasks/1')
+        assert response.status_code != 405
+
+def test_remove_task_exists_return_204():
+    tasks.clear()
+    tasks.append({'id': 1, 'titulo': 'titulo',
+                   'descricao': 'descricao', 'estado': False})
+    cliente = app.test_client()
+    response = cliente.delete('/task/1', content_type='application/json')
+    assert response.status_code == 204
+    assert response.data == b''
+
+def test_to_remove_task_exists_remove_task_from_list():
+    tasks.clear()
+    tasks.append({'id': 1, 'titulo': 'titulo',
+                   'descricao': 'descricao', 'estado': False})
+    cliente = app.test_client()
+    cliente.delete('/task/1', content_type='application/json')
+    assert len(tasks) == 0
+
+def test_to_remove_task_not_exists():
+    tasks.clear()
+    cliente = app.test_client()
+    response =  cliente.delete('/task/1', content_type='application/json')
+    assert response.status_code == 404

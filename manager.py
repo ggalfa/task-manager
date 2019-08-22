@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from operator import itemgetter
 import json
 
@@ -34,3 +34,12 @@ def create():
     }
     tasks.append(task)
     return jsonify(task), 201
+
+# Creating a route to remove task by id.
+@app.route('/task/<int:id_tasks>',methods=['DELETE'])
+def remove(id_tasks):
+    task = [task for task in tasks if task['id'] == id_tasks]
+    if not task:
+        abort(404)
+    tasks.remove(task[0])
+    return '', 204
