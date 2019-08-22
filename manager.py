@@ -16,7 +16,7 @@ tasks = []
 def listed():
     return jsonify(sorted(tasks, key=itemgetter('estado')))
 
-
+# Creating a route for create task.
 @app.route('/task', methods=['POST'])
 def create():
     # titulo = request.json.get('titulo')
@@ -43,3 +43,11 @@ def remove(id_tasks):
         abort(404)
     tasks.remove(task[0])
     return '', 204
+
+# Creating a route detail task
+@app.route('/task/<int:id_task>', methods=['GET'])
+def detail(id_task):
+    task = [task for task in tasks if task['id'] == id_task]
+    if not task:
+        abort(404)
+    return jsonify(task[0])

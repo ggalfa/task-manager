@@ -116,3 +116,23 @@ def test_to_remove_task_not_exists():
     cliente = app.test_client()
     response =  cliente.delete('/task/1', content_type='application/json')
     assert response.status_code == 404
+
+def test_detail_task_exists():
+    tasks.clear()
+    tasks.append({'id': 1, 'titulo': 'titulo',
+                   'descricao': 'descricao', 'entregue': False})
+    cliente = app.test_client()
+    response = cliente.get('/task/1', content_type='application/json')
+    data = json.loads(response.data.decode('utf-8'))
+    assert response.status_code == 200
+    assert data['id'] == 1
+    assert data['titulo'] == 'titulo'
+    assert data['descricao'] == 'descricao'
+    assert data['entregue'] == False
+
+def test_detail_task_not_exists():
+    tasks.clear()
+    cliente = app.test_client()
+    response = cliente.get('/task/1', content_type='application/json')
+    assert response.status_code == 404
+
