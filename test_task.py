@@ -1,5 +1,6 @@
 from manager import app, tasks
 import json
+# from collections import Mapping
 
 
 def test_listed_tasks_return_status_200():
@@ -44,7 +45,7 @@ def test_create_task_return_task_inserted():
     cliente = app.test_client()
     # performs the request using the verb POST
     response = cliente.post('/task', data=json.dumps({
-        'id': 'id',
+        # 'id': 'id',
         'titulo': 'titulo',
         'descricao': 'descricao'}),
         content_type='application/json')
@@ -74,10 +75,15 @@ def test_create_task_insert_element_in_blank():
                 content_type='application/json')
             assert len(tasks) > 0
 
-# def test_crete_task_without_description():
+# def test_listed_tasks_must_present_tasks_not_finished_first():
+#     tasks.clear()
+#     tasks.append({'id': 1, 'titulo': 'tarefa 1', 'descricao': 'tarefa de numero 1',
+#                   'estado': True})
+#     tasks.append({'id': 2, 'titulo': 'tarefa 2', 'descricao': 'tarefa de numero 2',
+#                   'estado': False})
 #     with app.test_client() as cliente:
-#         # status code must be 400 indicating a client error
-#         response = cliente.post('/task', data=json.dumps({'titulo': 'titulo'}),
-#                                 content_type='application/json')
-#         assert response.status_code == 400
-#     assert response.status_code == 201
+#         response = cliente.get('/task')
+#         data = json.loads(response.data.decode('UTF-8'))
+#         first_task, second_task = data
+#         assert first_task['titulo'] == 'tarefa 2'
+#         assert second_task['titulo'] == 'tarefa 1'

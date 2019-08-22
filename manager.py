@@ -1,4 +1,5 @@
 from flask import Flask, jsonify, request
+from operator import itemgetter
 import json
 
 
@@ -13,7 +14,7 @@ tasks = []
 
 @app.route('/tasks')
 def listed():
-    return jsonify(tasks)
+    return jsonify(sorted(tasks, key=itemgetter('estado')))
 
 
 @app.route('/task', methods=['POST'])
@@ -24,7 +25,7 @@ def create():
     descricao = request.get_json('descricao')
     if not descricao or not titulo:
         abort(400)
-        
+
     task = {
         'id': len(tasks) + 1,
         'titulo': titulo,
